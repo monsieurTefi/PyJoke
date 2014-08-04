@@ -1,0 +1,24 @@
+database:
+    active:    0                       #Where to fetch the jokes
+    host:      localhost
+    user:      root
+    passwd:    root
+    db:        jokes
+    table:     jokes_fr_cat
+sqlite:
+    active:    1
+
+postag:                          # What's important in a joke?
+    active:    0
+    default:   1
+    adj:       2
+    noun:      4
+    verb:      2
+    brute:     1                 #if active, will ignore "default" words
+pyjoke:
+    lang:      french            #For removing stopwords
+    jokelen:   100               #Max length for joke
+    debug:     0
+conversation:
+    level:     3
+    history:   0
