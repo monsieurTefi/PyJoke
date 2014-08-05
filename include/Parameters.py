@@ -15,6 +15,7 @@ class Parameters:
             self.passwd = doc["database"]["passwd"]
             self.db = doc["database"]["db"]
             self.table = doc["database"]["table"]
+            self.sqlite = doc["database"]["sqlite"]
 
             self.lang = doc["pyjoke"]["lang"]
             self.jokelen = doc["pyjoke"]["jokelen"]

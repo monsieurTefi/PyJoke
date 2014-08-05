@@ -110,8 +110,10 @@ class PyJoke:
 
         elif self.params.database=="sqlite":
             import sqlite3
-            conn = sqlite3.connect('/home/laurent/Documents/PyJoke/JOKES.db')
+            conn = sqlite3.connect(self.params.sqlite)
             conn.enable_load_extension(True)
+        else:
+            print "Error: Database?"
 
         # Cursor
         c = conn.cursor()
@@ -120,8 +122,7 @@ class PyJoke:
         if self.params.database=="sqlite":
             c.execute("SELECT load_extension('/usr/lib/sqlite3/pcre.so');")
 
-        else:
-            print "Error: Database?"
+
 
         # Query
         c.execute(query)
@@ -171,14 +172,15 @@ class PyJoke:
         if self.params.conv!=0:
             for i in range(self.params.conv):
                 keyw = KeywordsList(sentence,self.params)
-                print "[PyJoke - sentence {}] {}".format(i+1,sentence.encode('utf-8'))
+                print "[PyJoke - sentence {}] {}".format(i+1,sentence)
                 answer = self.getJoke(keyw)
                 print "[PyJoke - joke      ] "+answer+"\n"
-                sentence = answer
+                sentence = answer.encode('utf-8')
         # Single output
         else:
             keyw = KeywordsList(sentence,self.params)
             #print len(keyw)
-            print self.getJoke(keyw)
+            #print self.getJoke(keyw).encode('utf-8')
+            print self.getJoke(keyw).encode('utf-8')
 
     #

@@ -1,21 +1,28 @@
 database:
-    use:       sqlite             #Where to fetch the jokes (mysql\sqlite)
+    # sqlite|mysql
+    use:       sqlite
+    # MYSQL
     host:      localhost
     user:      root
     passwd:    root
     db:        jokes
     table:     jokes_fr_cat
-postag:                          # What's important in a joke?
+    # SQLITE
+    sqlite:    /home/laurent/Documents/PyJoke/JOKES.db
+postag:
     active:    0
     default:   1
     adj:       2
     noun:      4
     verb:      2
-    brute:     1                 #if active, will ignore "default" words
+    #if active, will ignore "default" words
+    brute:     1
 pyjoke:
-    lang:      french            #For removing stopwords
-    jokelen:   100               #Max length for joke
+    #For removing stopwords
+    lang:      french
+    #Max length for joke
+    jokelen:   100
     debug:     0
 conversation:
-    level:     3
+    level:     0
     history:   0
