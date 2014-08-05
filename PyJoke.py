@@ -91,13 +91,7 @@ class PyJoke:
     ###############################################
     def getJoke(self,keyw):
 
-        ##    Connection to DB
-        #################################
-        db = MySQLdb.connect(host=self.params.host, # your host, usually localhost
-                         user=self.params.user, # your username
-                          passwd=self.params.passwd, # your password
-                          db=self.params.db) # name of the data base
-        cur = db.cursor()
+        jokes = {}
 
         ##    QUERY
         #################################
@@ -106,15 +100,39 @@ class PyJoke:
             query = query + " OR  `text` REGEXP  \'"+keyw.getWord(x)+"\'";
         query = query + ") ORDER BY score DESC "
 
-        cur.execute(query)
+        ##    Connection to Database
+        #################################
+        if self.params.database=="mysql":
+            conn = MySQLdb.connect(host=self.params.host, # your host, usually localhost
+                             user=self.params.user, # your username
+                              passwd=self.params.passwd, # your password
+                              db=self.params.db) # name of the data base
 
-        jokes = {}
+        elif self.params.database=="sqlite":
+            import sqlite3
+            conn = sqlite3.connect('/home/laurent/Documents/PyJoke/JOKES.db')
+            conn.enable_load_extension(True)
+
+        # Cursor
+        c = conn.cursor()
+
+        # Regexp for SQLite
+        if self.params.database=="sqlite":
+            c.execute("SELECT load_extension('/usr/lib/sqlite3/pcre.so');")
+
+        else:
+            print "Error: Database?"
+
+        # Query
+        c.execute(query)
 
         ##    For each joke...
         #################################
-        for row in cur.fetchall() :
+        for row in c.fetchall() :
             # For each keyword
             jokes.update({row[0]:self.scoreJoke(row[0],keyw)})
+
+
 
         # Order by score
         jokes = OrderedDict(sorted(jokes.items(), key=lambda t: t[1]))
@@ -153,7 +171,7 @@ class PyJoke:
         if self.params.conv!=0:
             for i in range(self.params.conv):
                 keyw = KeywordsList(sentence,self.params)
-                print "[PyJoke - sentence {}] {}".format(i+1,sentence)
+                print "[PyJoke - sentence {}] {}".format(i+1,sentence.encode('utf-8'))
                 answer = self.getJoke(keyw)
                 print "[PyJoke - joke      ] "+answer+"\n"
                 sentence = answer

@@ -1,13 +1,10 @@
 database:
-    active:    0                       #Where to fetch the jokes
+    use:       sqlite             #Where to fetch the jokes (mysql\sqlite)
     host:      localhost
     user:      root
     passwd:    root
     db:        jokes
     table:     jokes_fr_cat
-sqlite:
-    active:    1
-
 postag:                          # What's important in a joke?
     active:    0
     default:   1

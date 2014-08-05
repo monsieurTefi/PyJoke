@@ -6,9 +6,10 @@ import yaml
 
 class Parameters:
     def __init__(self):
-        stream = open("/home/laurent/Stage_LIA/WAV2JOKE/PyJoke/parameters.yml", "r")
+        stream = open("/home/laurent/Documents/PyJoke/parameters.yml", "r")
         docs = yaml.load_all(stream)
         for doc in docs:
+            self.database = doc["database"]["use"]
             self.host = doc["database"]["host"]
             self.user = doc["database"]["user"]
             self.passwd = doc["database"]["passwd"]
