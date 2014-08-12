@@ -6,7 +6,12 @@ import yaml
 
 class Parameters:
     def __init__(self):
-        stream = open("/home/laurent/Documents/PyJoke/parameters.yml", "r")
+        import os
+        script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
+        rel_path = "../parameters.yml"
+        abs_file_path = os.path.join(script_dir, rel_path)
+
+        stream = open(abs_file_path, "r")
         docs = yaml.load_all(stream)
         for doc in docs:
             self.database = doc["database"]["use"]
@@ -15,11 +20,15 @@ class Parameters:
             self.passwd = doc["database"]["passwd"]
             self.db = doc["database"]["db"]
             self.table = doc["database"]["table"]
-            self.sqlite = doc["database"]["sqlite"]
+
+            script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
+            rel_path = "../"+doc["database"]["sqlite"]
+            self.sqlite = os.path.join(script_dir, rel_path)
 
             self.lang = doc["pyjoke"]["lang"]
             self.jokelen = doc["pyjoke"]["jokelen"]
             self.debug = doc["pyjoke"]["debug"]
+            self.nao = doc["pyjoke"]["nao"]
 
             self.postag = doc["postag"]["active"]
             self.default = doc["postag"]["default"]

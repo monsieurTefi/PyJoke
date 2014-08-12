@@ -19,7 +19,6 @@ import sys
 import os
 
 #Database, OrderedDict
-import MySQLdb
 from collections import OrderedDict
 
 # PERSO
@@ -69,8 +68,8 @@ class PyJoke:
         if (self.params.debug):
             print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"+j+ \
             "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"
-            print "~ Keywords ("+str(len(k))+")"
-            print "?"+x
+            print "~ Keywords ("+str(len(keyw))+")"
+            print "?"+str(x)
             print f
             print "> joke len: "+str(joke_len)
             print "> keywords:"+str(n_keywords*n_occurenc)
@@ -93,16 +92,27 @@ class PyJoke:
 
         jokes = {}
 
+
         ##    QUERY
         #################################
-        query = "SELECT text FROM "+self.params.table+" WHERE LENGTH(`text`)<"+str(self.params.jokelen)+" AND (`text` REGEXP  \'"+keyw.getWord(0)+"\'";
-        for x in range(1,len(keyw)):
-            query = query + " OR  `text` REGEXP  \'"+keyw.getWord(x)+"\'";
-        query = query + ") ORDER BY score DESC "
+        if self.params.database=="sqlite" and not self.params.nao:
+            query = "SELECT text FROM "+self.params.table+" WHERE LENGTH(`text`)<"+str(self.params.jokelen)+" AND (`text` REGEXP  \'"+keyw.getWord(0)+"\'";
+            for x in range(1,len(keyw)):
+                query = query + " OR  `text` REGEXP  \'"+keyw.getWord(x)+"\'";
+            query = query + ") ORDER BY score DESC "
+        else:
+            query = "SELECT text FROM "+self.params.table+" WHERE LENGTH(`text`)<"+str(self.params.jokelen)+" AND (`text` LIKE  \'%"+keyw.getWord(0)+"%\'";
+            for x in range(1,len(keyw)):
+                query = query + " OR  `text` LIKE  \'%"+keyw.getWord(x)+"%\'";
+            query = query + ") ORDER BY score DESC "
+
+        if self.params.debug:
+            print "DATABASE"+self.params.sqlite
 
         ##    Connection to Database
         #################################
         if self.params.database=="mysql":
+            import MySQLdb
             conn = MySQLdb.connect(host=self.params.host, # your host, usually localhost
                              user=self.params.user, # your username
                               passwd=self.params.passwd, # your password
@@ -119,9 +129,8 @@ class PyJoke:
         c = conn.cursor()
 
         # Regexp for SQLite
-        if self.params.database=="sqlite":
+        if self.params.database=="sqlite" and not self.params.nao:
             c.execute("SELECT load_extension('/usr/lib/sqlite3/pcre.so');")
-
 
 
         # Query
@@ -133,7 +142,7 @@ class PyJoke:
             # For each keyword
             jokes.update({row[0]:self.scoreJoke(row[0],keyw)})
 
-
+        conn.close()
 
         # Order by score
         jokes = OrderedDict(sorted(jokes.items(), key=lambda t: t[1]))
@@ -143,17 +152,20 @@ class PyJoke:
         #tmp.reverse()
         #print tmp[:2]
 
-        ##    Return best joke
-        #################################
-        if self.params.conv!=0:
-            # Second best joke (1st might be "the same in conversation")
-            return jokes.keys()[-2]
-        else:
-            # First best joke
-            return jokes.keys()[-1]
+        try :
+            ##    Return best joke
+            #################################
+            if self.params.conv!=0:
+                # Second best joke (1st might be "the same in conversation")
+                return jokes.keys()[-2]
+            else:
+                # First best joke
+                return jokes.keys()[-1]
 
-        #for k, v in jokes.items():
-            #print "%s: %s" % (k, v)
+            #for k, v in jokes.items():
+                #print "%s: %s" % (k, v)
+        except IndexError:
+            return "NO JOKE ERROR"
 
 
     ###############################################
@@ -180,7 +192,8 @@ class PyJoke:
         else:
             keyw = KeywordsList(sentence,self.params)
             #print len(keyw)
+            self.theJoke = self.getJoke(keyw).encode('utf-8')
             #print self.getJoke(keyw).encode('utf-8')
-            print self.getJoke(keyw).encode('utf-8')
 
-    #
+    def getTheJoke(self):
+        return self.theJoke

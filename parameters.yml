@@ -8,9 +8,9 @@ database:
     db:        jokes
     table:     jokes_fr_cat
     # SQLITE
-    sqlite:    /home/laurent/Documents/PyJoke/JOKES.db
+    sqlite:    JOKES.db
 postag:
-    active:    0
+    active:    1
     default:   1
     adj:       2
     noun:      4
@@ -18,6 +18,7 @@ postag:
     #if active, will ignore "default" words
     brute:     1
 pyjoke:
+    nao:       1
     #For removing stopwords
     lang:      french
     #Max length for joke
