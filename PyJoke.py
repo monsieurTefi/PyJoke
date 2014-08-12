@@ -175,11 +175,6 @@ class PyJoke:
     ###############################################
     def __init__(self,sentence):
 
-        if len(sys.argv)!=2:
-            print "[!] ERROR: Not enough/too many parameters.\nThink about the double quotes!\nUsage: python "\
-                +str(sys.argv[0])+" <str> "
-            exit(0)
-
         # Conversation
         if self.params.conv!=0:
             for i in range(self.params.conv):
